@@ -3,59 +3,44 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-// import { Stack } from "react-bootstrap";
+import LoginScreen from "./components/Login";
+import HomeScreen from "./components/Home";
+import ElevatorScreen from "./components/Elevator";
 
-function LoginScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Login Screen</Text>
-      <Button title="Go to Home" onPress={() => navigation.navigate("Home")} />
-    </View>
-  );
-}
-
-function HomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Details Screen to get the list of all elevators non operational</Text>
-      <Button title="Go to Elevators" onPress={() => navigation.navigate("Elevator")} />
-    </View>
-  );
-}
-
-function ElevatorScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Elevator Screen to check the status of 1 elevator(ther choosen one)</Text>
-      <Button title="Back to Home" onPress={() => navigation.navigate("Home")} />
-    </View>
-  );
+function Title() {
+  return <Image style={{ width: 100, height: 100 }} source={require("./assets/R2.png")} />;
 }
 
 const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            title: "Login",
+    <NativeBaseProvider>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
             headerStyle: {
-              backgroundColor: "#f4511e",
+              backgroundColor: "rgb(175, 11, 25)",
             },
             headerTintColor: "#fff",
             headerTitleStyle: {
               fontWeight: "bold",
             },
           }}
-        />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Elevator" component={ElevatorScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+        >
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{
+              title: "Login",
+            }}
+          />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Elevator" component={ElevatorScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </NativeBaseProvider>
   );
 }
 
