@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "./components/Login";
 import HomeScreen from "./components/Home";
 import ElevatorScreen from "./components/Elevator";
+import { NativeBaseProvider, Box } from "native-base";
 
 function Title() {
   return <Image style={{ width: 100, height: 100 }} source={require("./assets/R2.png")} />;
