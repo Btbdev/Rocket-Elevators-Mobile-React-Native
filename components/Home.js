@@ -5,31 +5,24 @@ import * as React from "react";
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Select } from "native-base";
+import { Heading, Select } from "native-base";
 import { SafeAreaView, FlatList, Style, StatusBar } from "react-native";
+import { ActivityIndicator } from "react-native-web";
 
-// https://b177-2001-56b-bc6d-7400-c04c-a395-8871-8d76.ngrok.io/api/Elevators/list
 // To get the elevator list
 let currentList = [];
-const getElevators = async () => {
+const getElevators = async (setElevators) => {
   try {
-    const res = await axios.get("https://5883-2001-56b-bc6d-7400-743a-92d4-fa76-22d3.ngrok.io/api/Elevators/list");
-    console.log("getElevators res:", res);
+    const res = await axios.get(
+      "  https://5290-2001-56b-bc6d-7400-743a-92d4-fa76-22d3.ngrok.io/api/Elevators/list"
+    );
+    currentList = await res.data;
 
-    const currentList = res.data;
-    console.log("The current list is:", currentList);
-    // localStorage.setItem("customerbuilding", currentList);
-    currentList.map((e) => {
-      console.log(e);
-    });
-    // return res;
+    setElevators(res.data);
   } catch (err) {
     console.warn("[getElevators] Error:", err);
   }
 };
-
-//data from api call
-// id: 170, status: Inactive, serial_number: 37457027, model: premium, elevator_type: corporate, last inspection: date...
 
 // hardcoded values for test
 const DATA = [
@@ -51,26 +44,44 @@ const DATA = [
 ];
 
 export default function HomeScreen({ navigation }) {
-  const renderItem = ({ item }) => <Item title={item.title} id={item.id} status={item.status} />;
+  const [elevators, setElevators] = useState([]);
+
+  useEffect(() => {
+    getElevators(setElevators);
+
+    console.log("elevator list111 is:", elevators);
+  }, []);
+
+  useEffect(() => {
+    console.log("elevator list is:", elevators);
+  }, [elevators]);
+
+  const renderItem = ({ item }) => <Item id={item.id} />;
 
   const itemOnPress = (id) => {
     console.log("selected item id is:", id);
 
-    navigation.navigate("myScreen", { elevatorID: id });
+    navigation.navigate("Elevator", { elevatorID: id });
   };
 
-  const Item = ({ title, id, status }) => (
+  const Item = ({ id }) => (
     <View style={styles.item}>
-      <Button title={status} onPress={() => itemOnPress(status)} />
+      <Button title={`${id}`} onPress={() => itemOnPress(id)} />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList data={DATA} renderItem={renderItem} keyExtractor={(item) => item.id} />
-      <Button title="Call the API" onPress={() => getElevators(currentList.id)}>
-        // //{" "}
-      </Button>
+      <Heading>Non operational elevator list</Heading>
+      <FlatList
+        data={elevators}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id}
+      />
+      <Button
+        title="Call the API"
+        onPress={() => getElevators(currentList.id)}
+      />
     </SafeAreaView>
   );
 }
@@ -90,21 +101,3 @@ const styles = StyleSheet.create({
     fontSize: 35,
   },
 });
-
-// useEffect(() => {
-//   getElevators();
-//   console.log("email is:", getElevators);
-// }, []);
-
-// export default function HomeScreen({ navigation }) {
-// return (
-//   <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-//     <Text>Some Details Screen to get the list of all elevators non operational</Text>
-//     <Button title="Call the API" onPress={() => getElevators(currentList.id)}>
-//       With Axios
-//     </Button>
-
-//     <Button title="Go to Elevators" onPress={() => navigation.navigate("Elevator")} />
-//   </View>
-// );
-// }
