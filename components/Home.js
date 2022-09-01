@@ -1,5 +1,5 @@
 // import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View, Image } from "react-native";
 import * as React from "react";
 // import { NavigationContainer } from "@react-navigation/native";
 // import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -14,7 +14,7 @@ let currentList = [];
 const getElevators = async (setElevators) => {
   try {
     const res = await axios.get(
-      "  https://5290-2001-56b-bc6d-7400-743a-92d4-fa76-22d3.ngrok.io/api/Elevators/list"
+      "    https://7af9-2001-56b-bc6d-7400-80f7-de5a-e35b-8fc.ngrok.io/api/Elevators/list"
     );
     currentList = await res.data;
 
@@ -45,6 +45,7 @@ const DATA = [
 
 export default function HomeScreen({ navigation }) {
   const [elevators, setElevators] = useState([]);
+  // const [elevatorID, setElevatorID] = useState({}); cela servira à passer la valeur (objet) vers autre page
 
   useEffect(() => {
     getElevators(setElevators);
@@ -72,16 +73,18 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Heading>Non operational elevator list</Heading>
+      <Image style={styles.logo} source={require("../assets/R2.png")} />
+      <Text style={styles.text}>Non operational elevator list</Text>
+
       <FlatList
         data={elevators}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
-      <Button
+      {/* <Button
         title="Call the API"
         onPress={() => getElevators(currentList.id)}
-      />
+      /> */}
     </SafeAreaView>
   );
 }
@@ -90,6 +93,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
+    // justifyContent: "center",
+    alignItems: "center",
   },
   item: {
     backgroundColor: "rgb(175, 11, 25)",
@@ -99,5 +104,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 35,
+  },
+  text: {
+    justifyContent: "center",
+  },
+  logo: {
+    width: 200,
+    height: 75,
+    resizeMode: "contain",
+    marginBottom: 25,
   },
 });
