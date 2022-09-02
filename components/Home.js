@@ -42,7 +42,13 @@ export default function HomeScreen({ navigation }) {
     console.log("elevator list is:", elevators);
   }, [elevators]);
 
-  const renderItem = ({ item }) => <Item id={item.id} status={item.status} />;
+  const renderItem = ({ item }) => (
+    <Item
+      id={item.id}
+      status={item.status}
+      serial_number={item.serial_number}
+    />
+  );
 
   const itemOnPress = (id, status) => {
     console.log("selected item id is:", id);
@@ -50,13 +56,31 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("Elevator", { elevatorID: id });
   };
 
-  const Item = ({ id }) => (
+  const Item = ({ id, serial_number }) => (
     <View style={styles.item}>
-      <Button
-        color="rgb(10, 100, 160)"
-        title={`${id}`}
-        onPress={() => itemOnPress(id)}
-      />
+      <HStack space={5}>
+        <Button
+          color="rgb(10, 100, 160)"
+          title={`${id}`}
+          onPress={() => itemOnPress(id)}
+        />
+
+        <Text
+          style={{ fontSize: 15, color: "#fff", alignSelf: "center" }}
+          fontSize="xs"
+          _light={{
+            color: "violet.500",
+          }}
+          _dark={{
+            color: "violet.400",
+          }}
+          fontWeight="500"
+          ml="-0.5"
+          mt="-1"
+        >
+          Serial number {serial_number}
+        </Text>
+      </HStack>
     </View>
   );
 

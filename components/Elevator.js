@@ -193,7 +193,7 @@ export default function ElevatorScreen({ navigation, route }) {
                     }}
                     fontWeight="400"
                   >
-                    Elevator status :
+                    Elevator status:
                     <Text
                       style={{
                         color: statusColor,
