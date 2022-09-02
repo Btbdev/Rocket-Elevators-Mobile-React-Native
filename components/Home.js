@@ -1,7 +1,6 @@
 import { Button, StyleSheet, Text, View, Image } from "react-native";
 import * as React from "react";
 import { NavigationContainer, useIsFocused } from "@react-navigation/native";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import {
@@ -12,7 +11,6 @@ import {
   useStyledSystemPropsResolver,
 } from "native-base";
 import { SafeAreaView, FlatList, Style, StatusBar, Box } from "react-native";
-import { ActivityIndicator } from "react-native-web";
 
 // To get the elevator list
 let currentList = [];
@@ -21,7 +19,7 @@ const getElevators = async (setElevators) => {
     const res = await axios.get(
       " https://eb60-142-169-125-10.ngrok.io/api/Elevators/list"
     );
-    currentList = await res.data;
+    currentList = res.data;
 
     setElevators(res.data);
   } catch (err) {
@@ -31,18 +29,26 @@ const getElevators = async (setElevators) => {
 
 export default function HomeScreen({ navigation }) {
   const [elevators, setElevators] = useState([]);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    getElevators(setElevators);
-
+    if (isFocused) {
+      getElevators(setElevators);
+    }
     console.log("elevator list111 is:", elevators);
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     console.log("elevator list is:", elevators);
   }, [elevators]);
 
-  const renderItem = ({ item }) => <Item id={item.id} status={item.status} />;
+  const renderItem = ({ item }) => (
+    <Item
+      id={item.id}
+      status={item.status}
+      serial_number={item.serial_number}
+    />
+  );
 
   const itemOnPress = (id, status) => {
     console.log("selected item id is:", id);
@@ -50,13 +56,31 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("Elevator", { elevatorID: id });
   };
 
-  const Item = ({ id }) => (
+  const Item = ({ id, serial_number }) => (
     <View style={styles.item}>
-      <Button
-        color="rgb(10, 100, 160)"
-        title={`${id}`}
-        onPress={() => itemOnPress(id)}
-      />
+      <HStack space={5}>
+        <Button
+          color="rgb(10, 100, 160)"
+          title={`${id}`}
+          onPress={() => itemOnPress(id)}
+        />
+
+        <Text
+          style={{ fontSize: 15, color: "#fff", alignSelf: "center" }}
+          fontSize="xs"
+          _light={{
+            color: "violet.500",
+          }}
+          _dark={{
+            color: "violet.400",
+          }}
+          fontWeight="500"
+          ml="-0.5"
+          mt="-1"
+        >
+          Serial number {serial_number}
+        </Text>
+      </HStack>
     </View>
   );
 

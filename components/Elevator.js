@@ -23,7 +23,6 @@ const getElevatorData = async (elevatorID, setElevatorData) => {
     const res = await axios.get(
       ` https://eb60-142-169-125-10.ngrok.io/api/Elevators/${elevatorID}`
     );
-    // console.log("infos about elevator:", res.data);
     setElevatorData(res.data);
   } catch (err) {
     console.warn("[getElevatorData] Error:", err);
@@ -53,13 +52,7 @@ export default function ElevatorScreen({ navigation, route }) {
       : "red"
     : "red";
 
-  // const displayBackButton = elevatorData.status != "Active" ?
-  // : displayButtonHomeNone;
-
-  // const displayBackButton = this.state.isActive;
-  // if (elevatorData.status == "Active") {
-  // }
-  // const isFocused = useIsFocused();
+  const displayBackButton = elevatorData.status != "Active" ? "none" : "flex";
 
   useEffect(() => {
     getElevatorData(elevatorID, setElevatorData);
@@ -193,7 +186,7 @@ export default function ElevatorScreen({ navigation, route }) {
                     }}
                     fontWeight="400"
                   >
-                    Elevator status :
+                    Elevator status:
                     <Text
                       style={{
                         color: statusColor,
@@ -225,7 +218,7 @@ export default function ElevatorScreen({ navigation, route }) {
           justifyContent: "flex-start",
           alignContent: "space-around",
           alignSelf: "stretch",
-          // display: "",
+          display: displayBackButton,
         }}
       >
         <Button
