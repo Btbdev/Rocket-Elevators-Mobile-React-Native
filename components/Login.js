@@ -24,7 +24,7 @@ export default function LoginScreen({ navigation }) {
   const getEmployee = async () => {
     try {
       const res = await axios.get(
-        `   https://7af9-2001-56b-bc6d-7400-80f7-de5a-e35b-8fc.ngrok.io/api/Employees?email=${email}`
+        `    https://eb60-142-169-125-10.ngrok.io/api/Employees?email=${email}`
       );
       console.log("Validate email of employee:", res);
 

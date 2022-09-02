@@ -1,6 +1,7 @@
 import { Button, StyleSheet, Text, View, Image } from "react-native";
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import axios from "axios";
 import { SafeAreaView, FlatList, Style, StatusBar } from "react-native";
 import {
@@ -12,53 +13,65 @@ import {
   Stack,
   HStack,
   NativeBaseProvider,
+  InfoIcon,
+  ThreeDotsIcon,
 } from "native-base";
-// import { NavigationContainer } from "@react-navigation/native";
-// import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// to change the choosen elevator status
+// to get the choosen elevator data
 const getElevatorData = async (elevatorID, setElevatorData) => {
   try {
     const res = await axios.get(
-      `https://7af9-2001-56b-bc6d-7400-80f7-de5a-e35b-8fc.ngrok.io/api/Elevators/${elevatorID}`
+      ` https://eb60-142-169-125-10.ngrok.io/api/Elevators/${elevatorID}`
     );
-    console.log("infos about elevator:", res.data);
+    // console.log("infos about elevator:", res.data);
     setElevatorData(res.data);
   } catch (err) {
     console.warn("[getElevatorData] Error:", err);
   }
 };
 
-const DATA = [
-  {
-    id: "1",
-    title: "First Item",
-    status: "Inactive",
-  },
-  {
-    id: "2",
-    title: "Second Item",
-    status: "Active",
-  },
-  {
-    id: "3",
-    title: "Third Item",
-    status: "Test",
-  },
-];
+// to update the choosen elevator status
+const updateElevatorStatus = async (elevatorID, setElevatorStatus) => {
+  try {
+    const res = await axios.put(
+      ` https://eb60-142-169-125-10.ngrok.io/api/Elevators/changeStatusToActive/${elevatorID}`
+    );
+    setElevatorStatus(res.data);
+  } catch (err) {
+    console.warn("[updateElevatorStatus] Error:", err);
+  }
+};
 
 export default function ElevatorScreen({ navigation, route }) {
-  const [elevatorData, setElevatorData] = useState({});
   const { elevatorID } = route.params;
-  console.log("the id is", elevatorID);
+  const [elevatorData, setElevatorData] = useState({});
+  const [elevatorStatus, setElevatorStatus] = useState("");
+
+  const statusColor = elevatorData
+    ? elevatorData.status == "Active"
+      ? "green"
+      : "red"
+    : "red";
+
+  // const displayBackButton = elevatorData.status != "Active" ?
+  // : displayButtonHomeNone;
+
+  // const displayBackButton = this.state.isActive;
+  // if (elevatorData.status == "Active") {
+  // }
+  // const isFocused = useIsFocused();
+
   useEffect(() => {
     getElevatorData(elevatorID, setElevatorData);
-    console.log("elevator data is111:", elevatorData);
   }, []);
 
   useEffect(() => {
-    console.log("elevator data is:", elevatorData);
-  }, [elevatorData]);
+    console.log("elevatorStatus is:", elevatorStatus);
+
+    if (elevatorStatus != "") {
+      getElevatorData(elevatorID, setElevatorData);
+    }
+  }, [elevatorStatus]);
 
   const renderItem = ({ item }) => <Item status={item.status} id={item.id} />;
 
@@ -76,10 +89,8 @@ export default function ElevatorScreen({ navigation, route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}> */}
       <Image style={styles.logo} source={require("../assets/R2.png")} />
       <Text>
-        {/* Information displayed about Elevator * */}
         <Box alignItems="center">
           <Box
             maxW="300"
@@ -99,38 +110,30 @@ export default function ElevatorScreen({ navigation, route }) {
               backgroundColor: "gray.50",
             }}
           >
-            <Box>
-              {/* <AspectRatio w="100%" ratio={16 / 9}>
-                  <Image
-                    style={styles.logo}
-                    source={require("../assets/R2.png")}
-                    // source={{
-                    //   uri: "https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg",
-                    // }}
-                    alt="image"
-                  />
-                </AspectRatio> */}
-            </Box>
             <Stack p="4" space={3}>
               <Stack space={2}>
                 <Heading size="md" ml="-1" textAlign={"center"}>
-                  Your choosen Elevator :
+                  Update your Elevator
                 </Heading>
+                <HStack space={5}>
+                  <Text
+                    style={{ fontSize: 15 }}
+                    fontSize="xs"
+                    _light={{
+                      color: "violet.500",
+                    }}
+                    _dark={{
+                      color: "violet.400",
+                    }}
+                    fontWeight="500"
+                    ml="-0.5"
+                    mt="-1"
+                  >
+                    ID : {elevatorData.id}
+                  </Text>
+                </HStack>
                 <Text
-                  fontSize="xs"
-                  _light={{
-                    color: "violet.500",
-                  }}
-                  _dark={{
-                    color: "violet.400",
-                  }}
-                  fontWeight="500"
-                  ml="-0.5"
-                  mt="-1"
-                >
-                  ID : {elevatorData.id}
-                </Text>
-                <Text
+                  style={{ fontSize: 15 }}
                   fontSize="xs"
                   _light={{
                     color: "violet.500",
@@ -145,6 +148,7 @@ export default function ElevatorScreen({ navigation, route }) {
                   Type : {elevatorData.elevator_type}
                 </Text>
                 <Text
+                  style={{ fontSize: 14, flexWrap: "nowrap" }}
                   fontSize="xs"
                   _light={{
                     color: "violet.500",
@@ -156,9 +160,10 @@ export default function ElevatorScreen({ navigation, route }) {
                   ml="-0.5"
                   mt="-1"
                 >
-                  Last inspection date : {elevatorData.last_inspection_date}
+                  Last inspection date :{elevatorData.last_inspection_date}
                 </Text>
                 <Text
+                  style={{ fontSize: 15 }}
                   fontSize="xs"
                   _light={{
                     color: "violet.500",
@@ -170,7 +175,7 @@ export default function ElevatorScreen({ navigation, route }) {
                   ml="-0.5"
                   mt="-1"
                 >
-                  Serial number : {elevatorData.elevator_type}
+                  Serial number : {elevatorData.serial_number}
                 </Text>
               </Stack>
 
@@ -181,13 +186,23 @@ export default function ElevatorScreen({ navigation, route }) {
               >
                 <HStack alignItems="center">
                   <Text
+                    style={{ fontSize: 20 }}
                     color="coolGray.600"
                     _dark={{
                       color: "warmGray.200",
                     }}
                     fontWeight="400"
                   >
-                    Elevator status : {elevatorData.status}
+                    Elevator status :
+                    <Text
+                      style={{
+                        color: statusColor,
+                        fontWeight: "bold",
+                        fontSize: 20,
+                      }}
+                    >
+                      {elevatorData.status}
+                    </Text>
                   </Text>
                 </HStack>
               </HStack>
@@ -195,17 +210,39 @@ export default function ElevatorScreen({ navigation, route }) {
           </Box>
         </Box>
       </Text>
+      <View style={styles.update}>
+        <Button
+          title="Update Status"
+          color="rgb(10, 100, 160)"
+          onPress={() => updateElevatorStatus(elevatorID, setElevatorStatus)}
+        />
+      </View>
 
-      <Button
-        title="Update Status"
-        onPress={() => navigation.navigate("Home")}
-      />
-      <Button
-        title="Back to Home"
-        onPress={() => navigation.navigate("Home")}
-      />
+      <View
+        style={{
+          flexDirection: "column",
+          marginTop: 20,
+          justifyContent: "flex-start",
+          alignContent: "space-around",
+          alignSelf: "stretch",
+          // display: "",
+        }}
+      >
+        <Button
+          title="Back to Home"
+          color="rgb(10, 100, 160)"
+          onPress={() => navigation.navigate("Home")}
+        />
+      </View>
+      <View style={styles.displayButton}>
+        <Button
+          title="Logout"
+          color="rgb(10, 100, 160)"
+          onPress={() => navigation.replace("Login")}
+        />
+      </View>
+
       {/* <Button title="Elevator call" onPress={() => getElevatorData()} /> */}
-      {/* </View> */}
     </SafeAreaView>
   );
 }
@@ -214,6 +251,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight || 0,
+    alignItems: "center",
+    maxWidth: "100%",
   },
   item: {
     backgroundColor: "#fff",
@@ -226,9 +265,39 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 200,
+    maxWidth: 400,
     height: 75,
     resizeMode: "contain",
-    marginBottom: 5,
-    marginTop: 35,
+    marginBottom: 15,
+    marginTop: 25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  displayButtonHomeNone: {
+    flexDirection: "column",
+    marginTop: 20,
+    justifyContent: "flex-start",
+    alignContent: "space-around",
+    alignSelf: "stretch",
+    display: "none",
+  },
+  displayButtonHomeFlex: {
+    flexDirection: "column",
+    marginTop: 20,
+    justifyContent: "flex-start",
+    alignContent: "space-around",
+    alignSelf: "stretch",
+  },
+
+  displayButton: {
+    flexDirection: "column",
+    marginTop: 20,
+    justifyContent: "flex-start",
+    alignContent: "space-around",
+    alignSelf: "stretch",
+  },
+  update: {
+    alignSelf: "stretch",
+    paddingTop: 30,
   },
 });
